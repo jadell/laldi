@@ -1,0 +1,11 @@
+{
+	"autoload": {
+		"psr-0": {
+			"Lal": "lib/"
+		}
+	},
+
+	"require": {
+		"silex/silex": "1.0.*@dev"
+	}
+}

@@ -1,0 +1,5 @@
+<ul>
+<?php foreach ($users as $user) : ?>
+	<li><a href="/<?php echo $user->getId() ?>"><?php echo $this->escape($user->getUsername()) ?></a></li>
+<?php endforeach ?>
+</ul>
