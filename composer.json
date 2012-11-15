@@ -8,5 +8,9 @@
 	"require": {
 		"silex/silex": "1.0.*@dev",
 		"evenement/evenement": "1.0.*"
+	},
+
+	"scripts": {
+		"post-install-cmd" : "./setup.sh"
 	}
 }
