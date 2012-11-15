@@ -32,6 +32,9 @@ class Datasource
 
 	protected function nextId($table)
 	{
+		if (!isset($this->data[$table])) {
+			$this->data[$table] = array();
+		}
 		return count($this->data[$table]);
 	}
 
@@ -50,6 +53,10 @@ class Datasource
 
 	public function findBy($table, $field, $value)
 	{
+		if (!isset($this->data[$table])) {
+			return array();
+		}
+
 		$matches = array();
 		foreach ($this->data[$table] as $check) {
 			if ($check[$field] == $value) {
@@ -61,6 +68,10 @@ class Datasource
 
 	public function findOneBy($table, $field, $value)
 	{
+		if (!isset($this->data[$table])) {
+			return null;
+		}
+
 		foreach ($this->data[$table] as $check) {
 			if ($check[$field] == $value) {
 				return $check;

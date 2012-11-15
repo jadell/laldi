@@ -1,5 +1,6 @@
 <?php
 error_reporting(-1);
+ini_set('html_errors', 1);
 ini_set('display_errors', 1);
 require_once __DIR__.'/vendor/autoload.php';
 
@@ -35,7 +36,7 @@ $app['data.source'] = $app->share(function ($app) {
  * only the factory function needs to change.
  */
 $app['user.factory'] = $app->protect(function () use ($app) {
-	return new Lal\User($app['user.repo'], $app['comment.repo']);
+	return new Lal\User($app['user.repo'], $app['comment.repo'], $app['pageview.repo']);
 });
 $app['comment.factory'] = $app->protect(function () use ($app) {
 	return new Lal\Comment($app['user.repo']);
@@ -58,7 +59,11 @@ $app['user.repo'] = $app->share(function ($app) {
 	return new Lal\UserRepository($app['data.source'], $app['user.factory']);
 });
 $app['comment.repo'] = $app->share(function ($app) {
-	return new Lal\CommentRepository($app['data.source'], $app['comment.factory']);
+	$app['event.emitter']->on('comment.saved', array($app['comment.log'], 'logComment'));
+	return new Lal\CommentRepository($app['data.source'], $app['event.emitter'], $app['comment.factory']);
+});
+$app['pageview.repo'] = $app->share(function ($app) {
+	return new Lal\PageViewRepository($app['data.source']);
 });
 
 /**
@@ -85,7 +90,25 @@ $app['view.renderer'] = function ($app) {
  * renderer.
  */
 $app['hello.controller'] = $app->share(function ($app) {
-	return new Lal\HelloController($app['user.repo'], $app['comment.repo'], $app['view.renderer']);
+	$app['event.emitter']->on('user.viewed', array($app['pageview.repo'], 'incrementCount'));
+	return new Lal\HelloController($app['user.repo'], $app['comment.repo'], $app['view.renderer'], $app['event.emitter']);
 });
+
+/**
+ * Comment log
+ */
+$app['comment.log'] = $app->share(function () {
+	return new Lal\CommentLog('/tmp/hello.log');
+});
+
+/**
+ * Event manager for dispatching and emitting events
+ *
+ * Also wire-up some listeners.
+ */
+$app['event.emitter'] = $app->share(function ($app) {
+	return new Evenement\EventEmitter();
+});
+
 
 return $app;

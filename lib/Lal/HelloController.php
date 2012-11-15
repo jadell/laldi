@@ -1,6 +1,8 @@
 <?php
 namespace Lal;
 
+use Evenement\EventEmitterInterface as EventEmitter;
+
 /**
  * Main controller
  *
@@ -22,12 +24,14 @@ class HelloController
 	protected $userRepo;
 	protected $commentRepo;
 	protected $view;
+	protected $event;
 
-	public function __construct(UserRepository $userRepo, CommentRepository $commentRepo, View $view)
+	public function __construct(UserRepository $userRepo, CommentRepository $commentRepo, View $view, EventEmitter $event)
 	{
 		$this->userRepo = $userRepo;
 		$this->commentRepo = $commentRepo;
 		$this->view = $view;
+		$this->event = $event;
 	}
 
 	public function index()
@@ -39,34 +43,39 @@ class HelloController
 	public function helloName($name)
 	{
 		$user = $this->userRepo->findByUsername($name);
-		return $this->view->render('hello', array(
-			'search' => $name,
-			'user' => $user,
-			'pairs' => $user ? $user->getPairs() : null,
-			'comments' => $user ? $user->getCommentsAbout() : null,
-		));
+		return $this->renderUser($user, $name);
 	}
 
 	public function helloId($id)
 	{
 		$user = $this->userRepo->find($id);
-		return $this->view->render('hello', array(
-			'search' => $id,
-			'user' => $user,
-			'pairs' => $user ? $user->getPairs() : null,
-			'comments' => $user ? $user->getCommentsAbout() : null,
-		));
+		return $this->renderUser($user, $id);
 	}
 
 	public function addComment($aboutId, $authorName, $content)
 	{
 		$author = $this->userRepo->findByUsername($authorName);
-
-		$comment = $this->commentRepo->newComment()
-			->setAuthorId($author->getId())
-			->setAboutId($aboutId)
-			->setContent($content);
-		$this->commentRepo->save($comment);
+		$about = $this->userRepo->find($aboutId);
+		if ($author && $about && $content) {
+			$comment = $this->commentRepo->newComment()
+				->setAuthorId($author->getId())
+				->setAboutId($about->getId())
+				->setContent($content);
+			$this->commentRepo->save($comment);
+		}
 		return $this->view->redirect("/$aboutId");
+	}
+
+	protected function renderUser(User $user=null, $search)
+	{
+		if ($user) {
+			$this->event->emit('user.viewed', array($user));
+		}
+		return $this->view->render('hello', array(
+			'search' => $search,
+			'user' => $user,
+			'pairs' => $user ? $user->getPairs() : null,
+			'comments' => $user ? $user->getCommentsAbout() : null,
+		));
 	}
 }
