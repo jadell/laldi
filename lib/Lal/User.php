@@ -3,11 +3,6 @@ namespace Lal;
 
 /**
  * Domain object representing a user
- *
- * Users need a way to retrieve their paired users,
- * so the DI container injects the User repository.
- * Users don't need to know or care how users are
- * stored or instantiated.
  */
 class User
 {
@@ -17,9 +12,9 @@ class User
 	protected $username;
 	protected $email;
 
-	public function __construct(UserRepository $userRepo)
+	public function __construct()
 	{
-		$this->userRepo = $userRepo;
+		$this->userRepo = new UserRepository();
 	}
 
 	public function setId($id) { $this->id = $id; return $this; }

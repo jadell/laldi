@@ -14,29 +14,23 @@ $app = require_once(__DIR__.'/../bootstrap.php');
 
 // Retrieve user info by username
 $app->get('/{name}', function ($name) use ($app) {
-	return $app['hello.controller']->helloName($name);
+	$controller = new Lal\HelloController();
+	return $controller->helloName($name);
 })
 ->assert('name', '[a-zA-Z]+');
 
 // Retrieve user info by id
 $app->get('/{id}', function ($id) use ($app) {
-	return $app['hello.controller']->helloId($id);
+	$controller = new Lal\HelloController();
+	return $controller->helloId($id);
 })
 ->assert('id', '\d+');
 
 
 // List users
 $app->get('/', function () use ($app) {
-	return $app['hello.controller']->index();
-});
-
-// Add comment
-$app->post('/comment', function (Symfony\Component\HttpFoundation\Request $request) use ($app) {
-	return $app['hello.controller']->addComment(
-		$request->get('aboutId'),
-		$request->get('authorName'),
-		$request->get('content')
-	);
+	$controller = new Lal\HelloController();
+	return $controller->index();
 });
 
 $app->run();

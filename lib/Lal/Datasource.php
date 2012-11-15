@@ -10,9 +10,9 @@ class Datasource
 	protected $data;
 
 
-	public function __construct($filepath)
+	public function __construct()
 	{
-		$this->filepath = $filepath;
+		$this->filepath = __DIR__.'/../../data/hello.json';
 		$this->data = json_decode(file_get_contents($this->filepath), true);
 	}
 

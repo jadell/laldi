@@ -10,9 +10,9 @@ class View
 {
 	protected $templatePath;
 
-	public function __construct($templatePath)
+	public function __construct()
 	{
-		$this->templatePath = $templatePath;
+		$this->templatePath = __DIR__.'/../../templates/';
 	}
 
 	public function render($name, $context=array())

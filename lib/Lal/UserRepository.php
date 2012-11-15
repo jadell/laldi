@@ -9,36 +9,14 @@ namespace Lal;
  * client objects that need User domain objects
  * do not need to know the details of retrieving
  * them.
- *
- * Since the repository needs to turn raw data
- * into user domain objects, it is injected with
- * the user factory from the DI container. The
- * repository does not need to know the specifics
- * of how to instantiate a user object, it just
- * needs a way to get them on demand.
  */
 class UserRepository
 {
 	protected $datasource;
-	protected $userFactory;
 
-	public function __construct(Datasource $datasource, $userFactory)
+	public function __construct()
 	{
-		$this->datasource = $datasource;
-		$this->userFactory = $userFactory;
-	}
-
-	/**
-	 * This method is simply a convienience wrapper
-	 * around the user factory. It is public so that
-	 * any clients of the repository do not need their
-	 * own copy of the user factory method. This way,
-	 * the repository is the canonical place to
-	 * instantiate new User objects.
-	 */
-	public function newUser($data=array())
-	{
-		return call_user_func($this->userFactory);
+		$this->datasource = new Datasource();
 	}
 
 	public function find($id)
@@ -74,7 +52,8 @@ class UserRepository
 		if (!$data) {
 			return null;
 		}
-		return $this->newUser()
+		$user = new User();
+		return $user
 			->setId($data['id'])
 			->setUsername($data['username'])
 			->setEmail($data['email']);

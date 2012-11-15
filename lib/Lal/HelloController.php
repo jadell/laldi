@@ -9,23 +9,16 @@ namespace Lal;
  * of separating out the handling from the routing
  * framework is to make it easier to test the
  * controller in isolation.
- *
- * Since the controller is instantiated in the DI
- * container, it is completely isolated from the
- * rest of the app framework. Everything it requires
- * is explicitly defined in its constructor, which
- * means unit tests can easily pass in stub/mock
- * objects for testing purposes.
  */
 class HelloController
 {
 	protected $userRepo;
 	protected $view;
 
-	public function __construct(UserRepository $userRepo, View $view)
+	public function __construct()
 	{
-		$this->userRepo = $userRepo;
-		$this->view = $view;
+		$this->userRepo = new UserRepository();
+		$this->view = new View();
 	}
 
 	public function index()
