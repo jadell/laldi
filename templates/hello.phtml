@@ -13,25 +13,6 @@
 		<?php endforeach ?>
 		</ul>
 	<?php endif ?>
-
-	<?php if ($comments) : ?>
-		Here's what people had to day:
-		<ul>
-		<?php foreach ($comments as $comment) :
-			$author = $comment->getAuthor();
-		?>
-			<li><a href="/<?php echo $author->getId() ?>"><?php echo $this->escape($author->getUsername()) ?></a>: <?php echo $this->escape($comment->getcontent()) ?></li>
-		<?php endforeach ?>
-		</ul>
-	<?php endif ?>
-
-	<h4>Add a comment</h4>
-	<form action="/comment" method="POST">
-		<input type="hidden" name="aboutId" value="<?php echo $user->getId() ?>" />
-		<label>Name:<br /><input type="text" name="authorName" /></label><br />
-		</label>Comment:<br /><textarea name="content"></textarea></label><br />
-		<input type="submit" value="Save" />
-	</form>
 <?php endif ?>
 
 <br />

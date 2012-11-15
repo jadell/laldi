@@ -20,13 +20,11 @@ namespace Lal;
 class HelloController
 {
 	protected $userRepo;
-	protected $commentRepo;
 	protected $view;
 
-	public function __construct(UserRepository $userRepo, CommentRepository $commentRepo, View $view)
+	public function __construct(UserRepository $userRepo, View $view)
 	{
 		$this->userRepo = $userRepo;
-		$this->commentRepo = $commentRepo;
 		$this->view = $view;
 	}
 
@@ -48,27 +46,12 @@ class HelloController
 		return $this->renderUser($user, $id);
 	}
 
-	public function addComment($aboutId, $authorName, $content)
-	{
-		$author = $this->userRepo->findByUsername($authorName);
-		$about = $this->userRepo->find($aboutId);
-		if ($author && $about && $content) {
-			$comment = $this->commentRepo->newComment()
-				->setAuthorId($author->getId())
-				->setAboutId($about->getId())
-				->setContent($content);
-			$this->commentRepo->save($comment);
-		}
-		return $this->view->redirect("/$aboutId");
-	}
-
 	protected function renderUser(User $user=null, $search)
 	{
 		return $this->view->render('hello', array(
 			'search' => $search,
 			'user' => $user,
 			'pairs' => $user ? $user->getPairs() : null,
-			'comments' => $user ? $user->getCommentsAbout() : null,
 		));
 	}
 }

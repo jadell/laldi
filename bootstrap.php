@@ -36,10 +36,7 @@ $app['data.source'] = $app->share(function ($app) {
  * only the factory function needs to change.
  */
 $app['user.factory'] = $app->protect(function () use ($app) {
-	return new Lal\User($app['user.repo'], $app['comment.repo']);
-});
-$app['comment.factory'] = $app->protect(function () use ($app) {
-	return new Lal\Comment($app['user.repo']);
+	return new Lal\User($app['user.repo']);
 });
 
 /**
@@ -57,9 +54,6 @@ $app['comment.factory'] = $app->protect(function () use ($app) {
  */
 $app['user.repo'] = $app->share(function ($app) {
 	return new Lal\UserRepository($app['data.source'], $app['user.factory']);
-});
-$app['comment.repo'] = $app->share(function ($app) {
-	return new Lal\CommentRepository($app['data.source'], $app['comment.factory']);
 });
 
 /**
@@ -86,7 +80,7 @@ $app['view.renderer'] = function ($app) {
  * renderer.
  */
 $app['hello.controller'] = $app->share(function ($app) {
-	return new Lal\HelloController($app['user.repo'], $app['comment.repo'], $app['view.renderer']);
+	return new Lal\HelloController($app['user.repo'], $app['view.renderer']);
 });
 
 

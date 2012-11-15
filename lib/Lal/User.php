@@ -4,25 +4,22 @@ namespace Lal;
 /**
  * Domain object representing a user
  *
- * Users need a way to retrieve their paired users
- * and comments about them, so the DI container injects
- * the User and Comment repositories. Users don't
- * need to know or care how users and comments are
+ * Users need a way to retrieve their paired users,
+ * so the DI container injects the User repository.
+ * Users don't need to know or care how users are
  * stored or instantiated.
  */
 class User
 {
 	protected $userRepo;
-	protected $commentRepo;
 
 	protected $id;
 	protected $username;
 	protected $email;
 
-	public function __construct(UserRepository $userRepo, CommentRepository $commentRepo)
+	public function __construct(UserRepository $userRepo)
 	{
 		$this->userRepo = $userRepo;
-		$this->commentRepo = $commentRepo;
 	}
 
 	public function setId($id) { $this->id = $id; return $this; }
@@ -37,10 +34,5 @@ class User
 	public function getPairs()
 	{
 		return $this->userRepo->findPairs($this->getId());
-	}
-
-	public function getCommentsAbout()
-	{
-		return $this->commentRepo->findByAbout($this->getId());
 	}
 }
