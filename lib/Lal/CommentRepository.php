@@ -1,8 +1,6 @@
 <?php
 namespace Lal;
 
-use Evenement\EventEmitterInterface as EventEmitter;
-
 /**
  * Repository for retrieving/saving User domain data.
  *
@@ -23,13 +21,11 @@ class CommentRepository
 {
 	protected $datasource;
 	protected $commentFactory;
-	protected $event;
 
-	public function __construct(Datasource $datasource, EventEmitter $event, $commentFactory)
+	public function __construct(Datasource $datasource, $commentFactory)
 	{
 		$this->datasource = $datasource;
 		$this->commentFactory = $commentFactory;
-		$this->event = $event;
 	}
 
 	/**
@@ -64,7 +60,6 @@ class CommentRepository
 		));
 		$comment->setId($id);
 		$this->datasource->commit();
-		$this->event->emit('comment.saved', array($comment));
 		return $comment;
 	}
 

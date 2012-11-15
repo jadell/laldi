@@ -14,17 +14,15 @@ class User
 {
 	protected $userRepo;
 	protected $commentRepo;
-	protected $viewRepo;
 
 	protected $id;
 	protected $username;
 	protected $email;
 
-	public function __construct(UserRepository $userRepo, CommentRepository $commentRepo, PageViewRepository $viewRepo)
+	public function __construct(UserRepository $userRepo, CommentRepository $commentRepo)
 	{
 		$this->userRepo = $userRepo;
 		$this->commentRepo = $commentRepo;
-		$this->viewRepo = $viewRepo;
 	}
 
 	public function setId($id) { $this->id = $id; return $this; }
@@ -44,10 +42,5 @@ class User
 	public function getCommentsAbout()
 	{
 		return $this->commentRepo->findByAbout($this->getId());
-	}
-
-	public function getViewCount()
-	{
-		return $this->viewRepo->getCount($this);
 	}
 }

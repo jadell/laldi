@@ -1,8 +1,6 @@
 <?php
 namespace Lal;
 
-use Evenement\EventEmitterInterface as EventEmitter;
-
 /**
  * Main controller
  *
@@ -24,14 +22,12 @@ class HelloController
 	protected $userRepo;
 	protected $commentRepo;
 	protected $view;
-	protected $event;
 
-	public function __construct(UserRepository $userRepo, CommentRepository $commentRepo, View $view, EventEmitter $event)
+	public function __construct(UserRepository $userRepo, CommentRepository $commentRepo, View $view)
 	{
 		$this->userRepo = $userRepo;
 		$this->commentRepo = $commentRepo;
 		$this->view = $view;
-		$this->event = $event;
 	}
 
 	public function index()
@@ -68,9 +64,6 @@ class HelloController
 
 	protected function renderUser(User $user=null, $search)
 	{
-		if ($user) {
-			$this->event->emit('user.viewed', array($user));
-		}
 		return $this->view->render('hello', array(
 			'search' => $search,
 			'user' => $user,
