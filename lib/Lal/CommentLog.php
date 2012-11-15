@@ -1,6 +1,18 @@
 <?php
 namespace Lal;
 
+/**
+ * Log comments that are added.
+ *
+ * This could be to a file, or sent by email,
+ * or to an audit database, or wherever.
+ *
+ * Nothing that deals with comments actually
+ * calls this directly. Instead, it is registered
+ * to listen for "comment.saved" events. If we
+ * decide to turn off comment logging, we only have
+ * to unregister the listener in the bootstrap.
+ */
 class CommentLog
 {
 	protected $fd;

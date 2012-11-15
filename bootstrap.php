@@ -46,7 +46,7 @@ $app['comment.factory'] = $app->protect(function () use ($app) {
  * The repositories control access into and out of
  * the datasource.
  *
- * They gets injected with the data.source so that
+ * They are injected with the data.source so that
  * they can read/write data, and also get injected
  * with factory functions so that they can
  * translate raw data.source data into objects.
@@ -58,12 +58,17 @@ $app['comment.factory'] = $app->protect(function () use ($app) {
 $app['user.repo'] = $app->share(function ($app) {
 	return new Lal\UserRepository($app['data.source'], $app['user.factory']);
 });
+$app['pageview.repo'] = $app->share(function ($app) {
+	return new Lal\PageViewRepository($app['data.source']);
+});
+/**
+ * Since the comment repo emits events when comments are saved
+ * it makes sense to register the listeners for those events
+ * when the repo is created.
+ */
 $app['comment.repo'] = $app->share(function ($app) {
 	$app['event.emitter']->on('comment.saved', array($app['comment.log'], 'logComment'));
 	return new Lal\CommentRepository($app['data.source'], $app['event.emitter'], $app['comment.factory']);
-});
-$app['pageview.repo'] = $app->share(function ($app) {
-	return new Lal\PageViewRepository($app['data.source']);
 });
 
 /**
@@ -88,6 +93,10 @@ $app['view.renderer'] = function ($app) {
  * to do work and format the results. This controller
  * is injected with the repositories and a custom view
  * renderer.
+ *
+ * Since the controller emits events when pages are viewed
+ * it makes sense to register the listeners for those events
+ * when the controller is created.
  */
 $app['hello.controller'] = $app->share(function ($app) {
 	$app['event.emitter']->on('user.viewed', array($app['pageview.repo'], 'incrementCount'));
@@ -95,7 +104,7 @@ $app['hello.controller'] = $app->share(function ($app) {
 });
 
 /**
- * Comment log
+ * Comment log listens for comment saved events
  */
 $app['comment.log'] = $app->share(function () {
 	return new Lal\CommentLog('/tmp/hello.log');
@@ -103,8 +112,6 @@ $app['comment.log'] = $app->share(function () {
 
 /**
  * Event manager for dispatching and emitting events
- *
- * Also wire-up some listeners.
  */
 $app['event.emitter'] = $app->share(function ($app) {
 	return new Evenement\EventEmitter();
